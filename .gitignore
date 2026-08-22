@@ -1,0 +1,8 @@
+# Ignore everything by default.
+*
+
+# Keep the ignore rules file and HTML files.
+!.gitignore
+!*.html
+!*/
+!**/*.html

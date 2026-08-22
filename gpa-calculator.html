@@ -1,0 +1,1878 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kalkulator GPA & CGPA — AIT Programme</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --paper: #f6f1e4;
+        --paper-2: #ede5d0;
+        --ink: #1e2338;
+        --ink-soft: #5b5744;
+        --navy: #12213f;
+        --navy-2: #1d3a66;
+        --gold: #a9792c;
+        --gold-light: #d8b463;
+        --line: #dcd2b4;
+        --good: #2e6b4f;
+        --pass: #8a6a1f;
+        --fail: #9c3b2e;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Inter", sans-serif;
+        line-height: 1.45;
+        padding-bottom: 60px;
+      }
+      ::selection {
+        background: var(--gold-light);
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        margin: 0;
+      }
+      .wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      /* ---------- HERO ---------- */
+      .hero {
+        background: linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%);
+        color: #f4efdf;
+        padding: 34px 0 30px;
+        border-bottom: 1px solid rgba(216, 180, 99, 0.7);
+      }
+      .hero-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 28px;
+        flex-wrap: wrap;
+      }
+      .hero-left {
+        flex: 1;
+        min-width: 260px;
+      }
+      .eyebrow {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11.5px;
+        letter-spacing: 0.14em;
+        color: var(--gold-light);
+        margin: 0 0 10px;
+        text-transform: uppercase;
+      }
+      .hero h1 {
+        font-size: 32px;
+        line-height: 1.15;
+        margin-bottom: 10px;
+        color: #fbf7ea;
+      }
+      .hero .sub {
+        font-size: 14px;
+        color: #cbc7b4;
+        max-width: 390px;
+        margin: 0 0 18px;
+      }
+      .stats-row {
+        display: flex;
+        gap: 22px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+      }
+      .stat-label {
+        display: block;
+        font-size: 10.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #9e9a87;
+        font-family: "IBM Plex Mono", monospace;
+      }
+      .stat-value {
+        display: block;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 22px;
+        font-weight: 600;
+        color: #fbf7ea;
+      }
+      .reset-btn {
+        background: transparent;
+        color: #e3b767;
+        border: 1px solid #6b5a34;
+        padding: 8px 14px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+        letter-spacing: 0.03em;
+        border-radius: 3px;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
+      .reset-btn:hover {
+        background: #e3b767;
+        color: var(--navy);
+      }
+
+      .hero-right {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .gauge-wrap {
+        width: 220px;
+      }
+      #gaugeVal {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 34px;
+        font-weight: 600;
+        fill: #fbf7ea;
+      }
+      #gaugeMax {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+        fill: #9e9a87;
+      }
+      .gauge-caption {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10.5px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--gold-light);
+        margin-top: 2px;
+      }
+
+      /* ---------- YEAR ACCORDION ---------- */
+      #yearsContainer {
+        margin-top: 26px;
+      }
+      details.year-card {
+        background: #fffdf6;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        margin-bottom: 14px;
+        box-shadow: 0 1px 0 rgba(30, 35, 56, 0.03);
+      }
+      details.year-card > summary {
+        list-style: none;
+        cursor: pointer;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 18px;
+        color: var(--navy);
+      }
+      details.year-card > summary::-webkit-details-marker {
+        display: none;
+      }
+      details.year-card > summary::before {
+        content: "▸";
+        display: inline-block;
+        margin-right: 10px;
+        color: var(--gold);
+        transition: transform 0.15s;
+        font-size: 14px;
+      }
+      details.year-card[open] > summary::before {
+        transform: rotate(90deg);
+      }
+      .summary-title {
+        display: flex;
+        align-items: center;
+      }
+      .year-badge {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 13px;
+        color: var(--ink-soft);
+        background: var(--paper-2);
+        padding: 4px 10px;
+        border-radius: 20px;
+        border: 1px solid var(--line);
+      }
+      .year-body {
+        padding: 2px 20px 18px;
+        border-top: 1px solid var(--line);
+      }
+
+      .sem-block {
+        margin-top: 18px;
+      }
+      .sem-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .sem-head h3 {
+        font-size: 14.5px;
+        color: var(--ink);
+      }
+      .sem-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .sem-gpa {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12.5px;
+        color: var(--ink-soft);
+      }
+      .sem-gpa b {
+        color: var(--navy);
+      }
+
+      .course-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 110px 88px;
+        align-items: end;
+        gap: 10px;
+        padding: 8px 0;
+        border-bottom: 1px dashed var(--line);
+      }
+      .elective-row {
+        grid-template-columns: minmax(0, 1fr) 72px 88px 88px 44px;
+      }
+      .input-control {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0;
+      }
+      .input-label {
+        color: var(--ink-soft);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        line-height: 1.2;
+        white-space: nowrap;
+      }
+      .course-row:last-child {
+        border-bottom: none;
+      }
+      .course-info {
+        min-width: 180px;
+      }
+      .course-name {
+        display: block;
+        font-size: 13.5px;
+        color: var(--ink);
+      }
+      .course-code {
+        display: block;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10.5px;
+        color: var(--ink-soft);
+        margin-top: 1px;
+      }
+      .course-note {
+        display: block;
+        font-size: 10.5px;
+        color: var(--pass);
+        font-style: italic;
+        margin-top: 2px;
+      }
+
+      input.mark-input,
+      input.credit-input,
+      input.name-input {
+        font-family: "IBM Plex Mono", monospace;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        color: var(--ink);
+        padding: 9px 8px;
+        font-size: 14px;
+        min-height: 44px;
+      }
+      input.mark-input {
+        width: 88px;
+        text-align: center;
+      }
+      input.credit-input {
+        width: 72px;
+        text-align: center;
+      }
+      input.name-input {
+        width: 100%;
+        min-width: 0;
+        flex: 0 0 auto;
+      }
+      .name-control {
+        min-width: 0;
+        width: 100%;
+      }
+      input:focus {
+        outline: 2px solid var(--gold-light);
+        outline-offset: 1px;
+        border-color: var(--gold);
+      }
+
+      .course-grade {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+        width: 88px;
+        text-align: right;
+        color: var(--ink-soft);
+        flex-shrink: 0;
+      }
+      @keyframes grade-reveal {
+        0% {
+          opacity: 0.35;
+          transform: translateY(4px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .course-grade.grade-updated {
+        animation: grade-reveal 240ms ease-out;
+      }
+      .grade-good {
+        color: var(--good);
+        font-weight: 600;
+      }
+      .grade-pass {
+        color: var(--pass);
+        font-weight: 600;
+      }
+      .grade-fail {
+        color: var(--fail);
+        font-weight: 600;
+      }
+
+      .elective-slot {
+        background: var(--paper-2);
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        padding: 10px 12px;
+        margin-top: 10px;
+      }
+      .slot-label {
+        font-size: 12px;
+        color: var(--navy);
+        font-weight: 600;
+        display: block;
+        margin-bottom: 6px;
+      }
+      .elective-row {
+        padding: 5px 0;
+      }
+      .remove-row-btn {
+        background: none;
+        border: 1px solid var(--line);
+        color: var(--fail);
+        width: 44px;
+        height: 44px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        flex-shrink: 0;
+        line-height: 1;
+      }
+      .remove-row-btn:hover {
+        background: var(--fail);
+        color: #fff;
+        border-color: var(--fail);
+      }
+      .add-row-btn {
+        margin-top: 6px;
+        background: none;
+        border: 1px dashed var(--gold);
+        color: var(--gold);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11.5px;
+        padding: 9px 12px;
+        min-height: 44px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .add-row-btn:hover {
+        background: var(--gold);
+        color: #fff;
+      }
+      .fill-semester-btn {
+        border: 1px solid var(--gold);
+        background: transparent;
+        color: var(--gold);
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 18px;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        line-height: 1;
+      }
+      .fill-semester-btn:hover,
+      .fill-semester-btn:focus-visible {
+        background: var(--gold);
+        color: #fff;
+      }
+      .fill-dialog {
+        width: min(420px, calc(100% - 32px));
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 24px;
+        background: #fffdf6;
+        color: var(--ink);
+        box-shadow: 0 18px 50px rgba(18, 33, 63, 0.25);
+      }
+      .fill-dialog::backdrop {
+        background: rgba(18, 33, 63, 0.48);
+      }
+      .fill-dialog h2 {
+        color: var(--navy);
+        font-size: 21px;
+        margin-bottom: 6px;
+      }
+      .fill-dialog p {
+        color: var(--ink-soft);
+        font-size: 13px;
+        margin: 0 0 18px;
+      }
+      .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 18px;
+      }
+      .dialog-btn {
+        min-height: 44px;
+        padding: 8px 14px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+      }
+      .dialog-cancel {
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--ink-soft);
+      }
+      .dialog-apply {
+        border: 1px solid var(--gold);
+        background: var(--gold);
+        color: #fff;
+      }
+
+      /* ---------- SCALE REF ---------- */
+      details.scale-ref {
+        max-width: 900px;
+        margin: 24px auto 0;
+        background: #fffdf6;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 0 20px;
+      }
+      details.scale-ref > summary {
+        cursor: pointer;
+        padding: 14px 0;
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        color: var(--navy);
+        font-size: 15px;
+      }
+      .scale-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 16px;
+        font-size: 13px;
+      }
+      .scale-table th {
+        background: var(--navy);
+        color: #f4efdf;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 8px 10px;
+        text-align: left;
+      }
+      .scale-table td {
+        padding: 6px 10px;
+        border-bottom: 1px solid var(--line);
+        font-family: "IBM Plex Mono", monospace;
+      }
+
+      footer {
+        max-width: 900px;
+        margin: 20px auto 0;
+        padding: 0 20px;
+        font-size: 11.5px;
+        color: var(--ink-soft);
+        text-align: center;
+      }
+
+      @media (max-width: 520px) {
+        .wrap {
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+        .hero {
+          padding: 28px 0 24px;
+        }
+        .hero-inner {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 22px;
+        }
+        .hero-right {
+          align-self: center;
+          width: 100%;
+        }
+        .gauge-wrap {
+          width: min(220px, 100%);
+        }
+        .course-row {
+          grid-template-columns: minmax(0, 1fr) 88px 88px;
+          align-items: flex-end;
+          gap: 8px;
+          padding: 10px 0;
+        }
+        .course-info {
+          grid-column: 1 / -1;
+          min-width: 0;
+        }
+        .sem-actions {
+          align-items: flex-end;
+          flex-direction: column-reverse;
+          gap: 4px;
+        }
+        .fill-semester-btn {
+          min-height: 44px;
+        }
+        .input-control {
+          min-width: 0;
+        }
+        .elective-row {
+          grid-template-columns: minmax(0, 1fr) 72px 88px 44px;
+        }
+        .elective-row .name-control {
+          grid-column: 1 / -1;
+        }
+        .course-grade {
+          text-align: left;
+          width: auto;
+          min-width: 74px;
+          padding-bottom: 12px;
+        }
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .course-grade.grade-updated {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <datalist id="pointsRef">
+      <option value="4.00">A</option>
+      <option value="3.70">A-</option>
+      <option value="3.30">B+</option>
+      <option value="3.00">B</option>
+      <option value="2.70">B-</option>
+      <option value="2.30">C+</option>
+      <option value="2.00">C</option>
+      <option value="1.70">C-</option>
+      <option value="1.30">D+</option>
+      <option value="1.00">D</option>
+      <option value="0.00">F</option>
+    </datalist>
+
+    <div class="hero">
+      <div class="wrap hero-inner">
+        <div class="hero-left">
+          <p class="eyebrow">AIT Programme · Xiamen University Malaysia</p>
+          <h1>Kalkulator GPA &amp; CGPA</h1>
+          <p class="sub">
+            Masukkan grade point 0.00–4.00 untuk mata kuliah yang sudah dinilai.
+            GPA semester, GPA tahun, dan CGPA akan terhitung otomatis.
+          </p>
+          <div class="stats-row">
+            <div class="stat">
+              <span class="stat-label">Total SKS Terhitung</span
+              ><span class="stat-value" id="totalCredits">0</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Total SKS Program</span
+              ><span class="stat-value">141</span>
+            </div>
+          </div>
+          <button class="reset-btn" id="resetBtn">Reset Semua Data</button>
+        </div>
+        <div class="hero-right">
+          <div class="gauge-wrap">
+            <svg viewBox="0 0 220 150" width="100%">
+              <path
+                d="M20,120 A90,90 0 0 1 46.36,56.36"
+                fill="none"
+                stroke="#9C3B2E"
+                stroke-width="10"
+                stroke-linecap="round"
+              />
+              <path
+                d="M46.36,56.36 A90,90 0 0 1 110,30"
+                fill="none"
+                stroke="#A9792C"
+                stroke-width="10"
+                stroke-linecap="round"
+              />
+              <path
+                d="M110,30 A90,90 0 0 1 173.64,56.36"
+                fill="none"
+                stroke="#1D3A66"
+                stroke-width="10"
+                stroke-linecap="round"
+              />
+              <path
+                d="M173.64,56.36 A90,90 0 0 1 200,120"
+                fill="none"
+                stroke="#D8B463"
+                stroke-width="10"
+                stroke-linecap="round"
+              />
+              <text
+                x="10"
+                y="136"
+                font-family="IBM Plex Mono"
+                font-size="9"
+                fill="#9E9A87"
+              >
+                0
+              </text>
+              <text
+                x="39"
+                y="46"
+                font-family="IBM Plex Mono"
+                font-size="9"
+                fill="#9E9A87"
+              >
+                1
+              </text>
+              <text
+                x="105"
+                y="16"
+                font-family="IBM Plex Mono"
+                font-size="9"
+                fill="#9E9A87"
+              >
+                2
+              </text>
+              <text
+                x="177"
+                y="46"
+                font-family="IBM Plex Mono"
+                font-size="9"
+                fill="#9E9A87"
+              >
+                3
+              </text>
+              <text
+                x="200"
+                y="136"
+                font-family="IBM Plex Mono"
+                font-size="9"
+                fill="#9E9A87"
+              >
+                4
+              </text>
+              <g id="needle" transform="rotate(-180 110 120)">
+                <line
+                  x1="110"
+                  y1="120"
+                  x2="188"
+                  y2="120"
+                  stroke="#FBF7EA"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                />
+              </g>
+              <circle
+                cx="110"
+                cy="120"
+                r="6"
+                fill="#D8B463"
+                stroke="#12213F"
+                stroke-width="2"
+              />
+              <text id="gaugeVal" x="110" y="102" text-anchor="middle">
+                0.00
+              </text>
+              <text
+                id="gaugeMax"
+                x="110"
+                y="118"
+                text-anchor="middle"
+                style="display: none"
+              ></text>
+            </svg>
+          </div>
+          <span class="gauge-caption">CGPA saat ini (dari 4.00)</span>
+          <span
+            class="sr-only"
+            id="cgpaStatus"
+            role="status"
+            aria-live="polite"
+          ></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div id="yearsContainer"></div>
+    </div>
+
+    <details class="scale-ref">
+      <summary>Skala Penilaian (Grading System)</summary>
+      <p style="font-size: 12.5px; color: var(--ink-soft); margin: -6px 0 12px">
+        Yang diketik ke kolom <b>Poin</b> di kalkulator adalah angka pada kolom
+        <b>Grade Points</b>, bukan kolom Marks.
+      </p>
+      <table class="scale-table">
+        <thead>
+          <tr>
+            <th>Marks</th>
+            <th>Grade</th>
+            <th>Grade Points</th>
+            <th>Deskripsi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>85 – 100</td>
+            <td>A</td>
+            <td>4.00</td>
+            <td>Distinction</td>
+          </tr>
+          <tr>
+            <td>80 – 84</td>
+            <td>A-</td>
+            <td>3.70</td>
+            <td>Distinction</td>
+          </tr>
+          <tr>
+            <td>75 – 79</td>
+            <td>B+</td>
+            <td>3.30</td>
+            <td>Good</td>
+          </tr>
+          <tr>
+            <td>70 – 74</td>
+            <td>B</td>
+            <td>3.00</td>
+            <td>Good</td>
+          </tr>
+          <tr>
+            <td>65 – 69</td>
+            <td>B-</td>
+            <td>2.70</td>
+            <td>Good</td>
+          </tr>
+          <tr>
+            <td>60 – 64</td>
+            <td>C+</td>
+            <td>2.30</td>
+            <td>Pass</td>
+          </tr>
+          <tr>
+            <td>55 – 59</td>
+            <td>C</td>
+            <td>2.00</td>
+            <td>Pass</td>
+          </tr>
+          <tr>
+            <td>50 – 54</td>
+            <td>C-</td>
+            <td>1.70</td>
+            <td>Conditional Pass</td>
+          </tr>
+          <tr>
+            <td>45 – 49</td>
+            <td>D+</td>
+            <td>1.30</td>
+            <td>Fail</td>
+          </tr>
+          <tr>
+            <td>40 – 44</td>
+            <td>D</td>
+            <td>1.00</td>
+            <td>Fail</td>
+          </tr>
+          <tr>
+            <td>≤ 39</td>
+            <td>F</td>
+            <td>0.00</td>
+            <td>Fail</td>
+          </tr>
+        </tbody>
+      </table>
+    </details>
+
+    <footer>
+      Data tersimpan otomatis dan tetap ada saat kamu buka lagi artifact ini
+      nanti. Slot elektif (mis. General Elective) bisa ditambah bebas — cocok
+      untuk kombinasi seperti 2+2+2 atau 3+3 SKS.
+    </footer>
+
+    <dialog
+      class="fill-dialog"
+      id="fillDialog"
+      aria-labelledby="fillDialogTitle"
+    >
+      <form method="dialog" id="fillDialogForm">
+        <h2 id="fillDialogTitle">Isi semua mata kuliah</h2>
+        <p id="fillDialogDescription">
+          Nilai ini akan diterapkan ke semua mata kuliah pada semester yang
+          dipilih.
+        </p>
+        <label class="input-control">
+          <span class="input-label">Grade point (0.00–4.00)</span>
+          <input
+            type="number"
+            id="fillValue"
+            min="0"
+            max="4"
+            step="0.01"
+            inputmode="decimal"
+            placeholder="3.30"
+            required
+          />
+        </label>
+        <div class="dialog-actions">
+          <button
+            type="button"
+            class="dialog-btn dialog-cancel"
+            id="fillCancel"
+          >
+            Batal
+          </button>
+          <button type="submit" class="dialog-btn dialog-apply">
+            Terapkan
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <script>
+      (function () {
+        "use strict";
+
+        /* ================= GRADE SCALE ================= */
+        var gradeScale = [
+          { min: 85, max: 100, grade: "A", points: 4.0 },
+          { min: 80, max: 84, grade: "A-", points: 3.7 },
+          { min: 75, max: 79, grade: "B+", points: 3.3 },
+          { min: 70, max: 74, grade: "B", points: 3.0 },
+          { min: 65, max: 69, grade: "B-", points: 2.7 },
+          { min: 60, max: 64, grade: "C+", points: 2.3 },
+          { min: 55, max: 59, grade: "C", points: 2.0 },
+          { min: 50, max: 54, grade: "C-", points: 1.7 },
+          { min: 45, max: 49, grade: "D+", points: 1.3 },
+          { min: 40, max: 44, grade: "D", points: 1.0 },
+          { min: 0, max: 39, grade: "F", points: 0.0 },
+        ];
+
+        // User enters the grade point directly (0.00–4.00), matching the "Grade Points"
+        // column of the official table. parsePoints() reads/clamps that number for the
+        // GPA math; findGradeLabel() looks the letter grade back up, purely for display.
+        function parsePoints(val) {
+          if (val === "" || val === null || val === undefined) return null;
+          var v = parseFloat(val);
+          if (isNaN(v)) return null;
+          return Math.max(0, Math.min(4, v));
+        }
+
+        function findGradeLabel(points) {
+          if (points === null) return null;
+          var rounded = Math.round(points * 100) / 100;
+          for (var i = 0; i < gradeScale.length; i++) {
+            if (Math.abs(gradeScale[i].points - rounded) < 0.005)
+              return gradeScale[i];
+          }
+          return null;
+        }
+
+        function gradeClass(points) {
+          if (points >= 3.3) return "grade-good";
+          if (points >= 1.7) return "grade-pass";
+          return "grade-fail";
+        }
+
+        /* ================= CURRICULUM DATA ================= */
+        var rawCurriculum = [
+          {
+            year: 1,
+            semesters: [
+              {
+                key: "s1",
+                label: "Semester 1 (Ganjil)",
+                fixed: [
+                  { code: "BSC121", name: "Calculus I A", credit: 5 },
+                  { code: "BSC124", name: "Linear Algebra", credit: 3 },
+                  { code: "AIT101", name: "Programming Language C", credit: 3 },
+                  {
+                    code: "AIT102",
+                    name: "Python and Tensorflow Programming",
+                    credit: 3,
+                  },
+                  {
+                    code: "MPU1.1-I / MPU3182",
+                    name: "Bahasa Melayu Komunikasi 2 / Penghayatan Etika dan Peradaban",
+                    credit: 2,
+                    note: "Sering dinilai Pass/Fail — kosongkan jika tidak memengaruhi GPA",
+                  },
+                ],
+                electiveSlots: [],
+              },
+              {
+                key: "s2",
+                label: "Semester 2 (Genap)",
+                fixed: [
+                  { code: "BSC123", name: "Calculus II", credit: 5 },
+                  {
+                    code: "BSC125",
+                    name: "Probability and Statistics A",
+                    credit: 4,
+                  },
+                  {
+                    code: "SOF106",
+                    name: "Principles of Artificial Intelligence",
+                    credit: 3,
+                  },
+                  {
+                    code: "AIT103",
+                    name: "Introduction to Intelligence Application",
+                    credit: 3,
+                  },
+                  {
+                    code: "MPU3192",
+                    name: "Falsafah dan Isu Semasa",
+                    credit: 2,
+                    note: "Sering dinilai Pass/Fail — kosongkan jika tidak memengaruhi GPA",
+                  },
+                ],
+                electiveSlots: [],
+              },
+              {
+                key: "sp",
+                label: "Semester Pendek",
+                fixed: [],
+                electiveSlots: [
+                  {
+                    label: "General Elective (Tabel 1b) — total 6 SKS",
+                    defaultCredit: 6,
+                    requiredCount: 1,
+                    options: null,
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            year: 2,
+            semesters: [
+              {
+                key: "s1",
+                label: "Semester 1 (Ganjil)",
+                fixed: [
+                  { code: "BSC136", name: "Discrete Mathematics B", credit: 3 },
+                  { code: "AIT206", name: "Data Structures", credit: 3 },
+                  {
+                    code: "AIT201",
+                    name: "Applied Machine Learning",
+                    credit: 3,
+                  },
+                  {
+                    code: "CST301",
+                    name: "Principles of Computer Composition",
+                    credit: 4,
+                  },
+                  {
+                    code: "AIT205",
+                    name: "Matrix Analysis and Application",
+                    credit: 3,
+                  },
+                ],
+                electiveSlots: [],
+              },
+              {
+                key: "s2",
+                label: "Semester 2 (Genap)",
+                fixed: [
+                  {
+                    code: "CST306",
+                    name: "Principles of Operating Systems",
+                    credit: 4,
+                  },
+                  {
+                    code: "AIT202",
+                    name: "Methods and Applications of Deep Learning",
+                    credit: 3,
+                  },
+                  {
+                    code: "CST207",
+                    name: "Design and Analysis of Algorithms",
+                    credit: 4,
+                  },
+                ],
+                electiveSlots: [
+                  {
+                    label:
+                      "Pilih 1: NLP atau Computer Vision and Robotics — 3 SKS",
+                    defaultCredit: 3,
+                    requiredCount: 1,
+                    options: [
+                      "Natural Language Processing (AIT203)",
+                      "Computer Vision and Robotics (AIT204)",
+                    ],
+                  },
+                  {
+                    label: "Pilih 1: OOP C++ atau OOP Java — 4 SKS",
+                    defaultCredit: 4,
+                    requiredCount: 1,
+                    options: [
+                      "Object-Oriented Programming – C++ (CST209)",
+                      "Object-Oriented Programming – Java (CST210)",
+                    ],
+                  },
+                ],
+              },
+              {
+                key: "sp",
+                label: "Semester Pendek",
+                fixed: [
+                  {
+                    code: "MPU2.1 / MPU2.2",
+                    name: "Bahasa Kebangsaan A / Writing for Professional Purposes",
+                    credit: 2,
+                    note: "Sering dinilai Pass/Fail — kosongkan jika tidak memengaruhi GPA",
+                  },
+                  {
+                    code: "MPU3322",
+                    name: "Integriti dan Antirasuah",
+                    credit: 2,
+                    note: "Sering dinilai Pass/Fail — kosongkan jika tidak memengaruhi GPA",
+                  },
+                ],
+                electiveSlots: [],
+              },
+            ],
+          },
+          {
+            year: 3,
+            semesters: [
+              {
+                key: "s1",
+                label: "Semester 1 (Ganjil)",
+                fixed: [
+                  {
+                    code: "CST309",
+                    name: "Computer Networks and Communication",
+                    credit: 4,
+                  },
+                  { code: "SWE404", name: "Big Data Analytics", credit: 3 },
+                  { code: "AIT302", name: "Statistical Learning", credit: 3 },
+                ],
+                electiveSlots: [
+                  {
+                    label: "Pilih 2 dari 4 — masing-masing 4 SKS (total 8 SKS)",
+                    defaultCredit: 4,
+                    requiredCount: 2,
+                    options: [
+                      "Computer Architecture (CST308)",
+                      "Compiler Principles (CST302)",
+                      "Numerical Methods (BSC128)",
+                      "Computer Graphics (CST305)",
+                    ],
+                  },
+                ],
+              },
+              {
+                key: "s2",
+                label: "Semester 2 (Genap)",
+                fixed: [{ code: "AIT310", name: "Thesis I", credit: 3 }],
+                electiveSlots: [
+                  {
+                    label:
+                      "Pilih 1: Advanced AI (NLP) atau (Computer Vision) — 3 SKS",
+                    defaultCredit: 3,
+                    requiredCount: 1,
+                    options: [
+                      "Advanced Issues of AI – Natural Language Processing (AIT303)",
+                      "Advanced Issues of AI – Computer Vision (AIT304)",
+                    ],
+                  },
+                  {
+                    label: "Pilih 2 dari 4 — masing-masing 3 SKS (total 6 SKS)",
+                    defaultCredit: 3,
+                    requiredCount: 2,
+                    options: [
+                      "Advanced Machine Learning (AIT301)",
+                      "Robot Kinematics and Dynamics (AIT305)",
+                      "Deep Reinforcement Learning and Control (AIT306)",
+                      "Computational Cognitive Science (AIT307)",
+                    ],
+                  },
+                  {
+                    label: "Pilih 1: Information Security atau IoT — 3 SKS",
+                    defaultCredit: 3,
+                    requiredCount: 1,
+                    options: [
+                      "Information Security (SWE308)",
+                      "Technology and Application of Internet of Things (SWE403)",
+                    ],
+                  },
+                ],
+              },
+              {
+                key: "sp",
+                label: "Semester Pendek",
+                fixed: [
+                  {
+                    code: "MPU4.1",
+                    name: "Community Service",
+                    credit: 2,
+                    note: "Sering dinilai Pass/Fail — kosongkan jika tidak memengaruhi GPA",
+                  },
+                ],
+                electiveSlots: [
+                  {
+                    label: "General Elective (Tabel 1b) — 3 SKS",
+                    defaultCredit: 3,
+                    requiredCount: 1,
+                    options: null,
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            year: 4,
+            semesters: [
+              {
+                key: "s1",
+                label: "Semester 1 (Ganjil)",
+                fixed: [
+                  {
+                    code: "CST307",
+                    name: "Software Architecture and Development Environment",
+                    credit: 4,
+                  },
+                  {
+                    code: "CST403",
+                    name: "Principles of Database Systems",
+                    credit: 4,
+                  },
+                  { code: "AIT410", name: "Thesis II", credit: 3 },
+                ],
+                electiveSlots: [
+                  {
+                    label: "Pilih 1 — 3 SKS",
+                    defaultCredit: 3,
+                    requiredCount: 1,
+                    options: [
+                      "Strategic Reasoning for AI (AIT401)",
+                      "Planning Techniques for Robotics (AIT402)",
+                      "Advanced Data Analysis (AIT403)",
+                    ],
+                  },
+                ],
+              },
+              {
+                key: "s2",
+                label: "Semester 2 (Genap)",
+                fixed: [
+                  {
+                    code: "AIT420",
+                    name: "Industrial Training",
+                    credit: 6,
+                    note: "Sering dinilai Pass/Fail — kosongkan jika tidak memengaruhi GPA",
+                  },
+                ],
+                electiveSlots: [],
+              },
+              {
+                key: "sp",
+                label: "Semester Pendek",
+                fixed: [],
+                electiveSlots: [
+                  {
+                    label: "General Elective (Tabel 1b) — total 6 SKS",
+                    defaultCredit: 6,
+                    requiredCount: 1,
+                    options: null,
+                  },
+                ],
+              },
+            ],
+          },
+        ];
+
+        var fixedCounter = 0,
+          slotCounter = 0,
+          rowCounter = 0;
+        var curriculum = rawCurriculum.map(function (y) {
+          return {
+            year: y.year,
+            semesters: y.semesters.map(function (s) {
+              return {
+                id: "y" + y.year + "_" + s.key,
+                key: s.key,
+                label: s.label,
+                fixed: s.fixed.map(function (c) {
+                  var o = Object.assign({}, c);
+                  o.id = "f" + fixedCounter++;
+                  return o;
+                }),
+                electiveSlots: s.electiveSlots.map(function (sl) {
+                  var o = Object.assign({}, sl);
+                  o.id = "e" + slotCounter++;
+                  return o;
+                }),
+              };
+            }),
+          };
+        });
+
+        function findSlot(slotId) {
+          for (var yi = 0; yi < curriculum.length; yi++) {
+            var sems = curriculum[yi].semesters;
+            for (var si = 0; si < sems.length; si++) {
+              var slots = sems[si].electiveSlots;
+              for (var k = 0; k < slots.length; k++) {
+                if (slots[k].id === slotId) return slots[k];
+              }
+            }
+          }
+          return null;
+        }
+
+        function findSemester(semesterId) {
+          for (var yi = 0; yi < curriculum.length; yi++) {
+            for (var si = 0; si < curriculum[yi].semesters.length; si++) {
+              if (curriculum[yi].semesters[si].id === semesterId) {
+                return curriculum[yi].semesters[si];
+              }
+            }
+          }
+          return null;
+        }
+
+        /* ================= STATE ================= */
+        var STORAGE_KEY = "ait-gpa-calculator-state";
+
+        function defaultState() {
+          var st = { fixed: {}, electiveRows: {} };
+          curriculum.forEach(function (y) {
+            y.semesters.forEach(function (s) {
+              s.fixed.forEach(function (c) {
+                st.fixed[c.id] = "";
+              });
+              s.electiveSlots.forEach(function (sl) {
+                st.electiveRows[sl.id] = [];
+                for (var i = 0; i < sl.requiredCount; i++) {
+                  st.electiveRows[sl.id].push({
+                    rid: "r" + rowCounter++,
+                    name: "",
+                    credit: sl.options ? String(sl.defaultCredit) : "",
+                    mark: "",
+                  });
+                }
+              });
+            });
+          });
+          return st;
+        }
+
+        function mergeState(saved) {
+          var def = defaultState();
+          if (!saved) return def;
+          try {
+            var parsed = typeof saved === "string" ? JSON.parse(saved) : saved;
+            Object.keys(def.fixed).forEach(function (id) {
+              if (parsed.fixed && parsed.fixed[id] !== undefined)
+                def.fixed[id] = parsed.fixed[id];
+            });
+            Object.keys(def.electiveRows).forEach(function (slotId) {
+              if (
+                parsed.electiveRows &&
+                Array.isArray(parsed.electiveRows[slotId]) &&
+                parsed.electiveRows[slotId].length > 0
+              ) {
+                def.electiveRows[slotId] = parsed.electiveRows[slotId].map(
+                  function (r) {
+                    return {
+                      rid: r.rid || "r" + rowCounter++,
+                      name: r.name || "",
+                      credit: r.credit !== undefined ? r.credit : "",
+                      mark: r.mark !== undefined ? r.mark : "",
+                    };
+                  },
+                );
+              }
+            });
+            return def;
+          } catch (e) {
+            return def;
+          }
+        }
+
+        var state = defaultState();
+        var saveTimer = null;
+        function scheduleSave() {
+          if (saveTimer) clearTimeout(saveTimer);
+          saveTimer = setTimeout(function () {
+            try {
+              var serialized = JSON.stringify(state);
+              if (window.storage && window.storage.set) {
+                window.storage
+                  .set(STORAGE_KEY, serialized, false)
+                  .catch(function () {});
+              } else {
+                localStorage.setItem(STORAGE_KEY, serialized);
+              }
+            } catch (e) {}
+          }, 400);
+        }
+
+        /* ================= COMPUTE ================= */
+        function computeAll() {
+          var result = {
+            semesters: {},
+            years: {},
+            overall: { credits: 0, qp: 0 },
+          };
+          curriculum.forEach(function (y) {
+            var yearCredits = 0,
+              yearQP = 0;
+            y.semesters.forEach(function (s) {
+              var semCredits = 0,
+                semQP = 0;
+              s.fixed.forEach(function (c) {
+                var pts = parsePoints(state.fixed[c.id]);
+                if (pts !== null) {
+                  semCredits += c.credit;
+                  semQP += c.credit * pts;
+                }
+              });
+              s.electiveSlots.forEach(function (sl) {
+                (state.electiveRows[sl.id] || []).forEach(function (row) {
+                  var credit = parseFloat(row.credit);
+                  var pts = parsePoints(row.mark);
+                  if (pts !== null && !isNaN(credit) && credit > 0) {
+                    semCredits += credit;
+                    semQP += credit * pts;
+                  }
+                });
+              });
+              result.semesters[s.id] = {
+                credits: semCredits,
+                qp: semQP,
+                gpa: semCredits > 0 ? semQP / semCredits : null,
+              };
+              yearCredits += semCredits;
+              yearQP += semQP;
+            });
+            result.years[y.year] = {
+              credits: yearCredits,
+              qp: yearQP,
+              gpa: yearCredits > 0 ? yearQP / yearCredits : null,
+            };
+            result.overall.credits += yearCredits;
+            result.overall.qp += yearQP;
+          });
+          result.overall.cgpa =
+            result.overall.credits > 0
+              ? result.overall.qp / result.overall.credits
+              : null;
+          return result;
+        }
+
+        function fmt(n) {
+          return n === null || n === undefined || isNaN(n) ? "–" : n.toFixed(2);
+        }
+
+        function updateGaugeUI(cgpaVal, totalCredits) {
+          var cgpa = cgpaVal === null ? 0 : cgpaVal;
+          var deg = -180 + (Math.max(0, Math.min(4, cgpa)) / 4) * 180;
+          var needle = document.getElementById("needle");
+          needle.setAttribute("transform", "rotate(" + deg + " 110 120)");
+          document.getElementById("gaugeVal").textContent = fmt(cgpaVal);
+          document.getElementById("totalCredits").textContent = totalCredits;
+          document.getElementById("cgpaStatus").textContent =
+            cgpaVal === null
+              ? "Belum ada nilai yang dihitung."
+              : "CGPA saat ini " +
+                fmt(cgpaVal) +
+                " dari 4.00, dengan " +
+                totalCredits +
+                " SKS terhitung.";
+        }
+
+        function recomputeAndRender() {
+          var res = computeAll();
+          curriculum.forEach(function (y) {
+            y.semesters.forEach(function (s) {
+              var el = document.getElementById("semgpa-" + s.id);
+              if (el) {
+                var d = res.semesters[s.id];
+                el.innerHTML =
+                  d.credits > 0
+                    ? d.credits + " SKS · GPA <b>" + fmt(d.gpa) + "</b>"
+                    : "Belum ada nilai";
+              }
+            });
+            var yEl = document.getElementById("yeargpa-" + y.year);
+            if (yEl) {
+              var yd = res.years[y.year];
+              yEl.textContent =
+                yd.credits > 0
+                  ? yd.credits + " SKS · GPA " + fmt(yd.gpa)
+                  : "Belum ada nilai";
+            }
+          });
+          updateGaugeUI(res.overall.cgpa, res.overall.credits);
+        }
+
+        function updateGradeBadge(elId, pointsVal) {
+          var el = document.getElementById(elId);
+          if (!el) return;
+          el.className = "course-grade";
+          var pts = parsePoints(pointsVal);
+          if (pts === null) {
+            el.textContent = "—";
+            return;
+          }
+          var label = findGradeLabel(pts);
+          el.textContent = (label ? label.grade + " · " : "") + pts.toFixed(2);
+          el.classList.add(gradeClass(pts));
+          el.classList.remove("grade-updated");
+          void el.offsetWidth;
+          el.classList.add("grade-updated");
+        }
+
+        /* ================= RENDER ================= */
+        function escapeHtml(str) {
+          return String(str).replace(/[&<>"']/g, function (c) {
+            return {
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            }[c];
+          });
+        }
+
+        function fixedRowHTML(c) {
+          var noteHtml = c.note
+            ? '<span class="course-note">' + escapeHtml(c.note) + "</span>"
+            : "";
+          return (
+            "" +
+            '<div class="course-row">' +
+            '<div class="course-info">' +
+            '<span class="course-name">' +
+            escapeHtml(c.name) +
+            "</span>" +
+            '<span class="course-code">' +
+            escapeHtml(c.code) +
+            " · " +
+            c.credit +
+            " SKS</span>" +
+            noteHtml +
+            "</div>" +
+            '<label class="input-control">' +
+            '<span class="input-label">Grade point</span>' +
+            '<input type="number" class="mark-input" data-fixed-id="' +
+            c.id +
+            '" list="pointsRef" min="0" max="4" step="0.01" inputmode="decimal" aria-label="Grade point untuk ' +
+            escapeHtml(c.name) +
+            '" placeholder="0.00" value="' +
+            escapeHtml(state.fixed[c.id]) +
+            '">' +
+            "</label>" +
+            '<span class="course-grade" id="grade-' +
+            c.id +
+            '">—</span>' +
+            "</div>"
+          );
+        }
+
+        function electiveRowHTML(sl, row) {
+          return (
+            "" +
+            '<div class="course-row elective-row" data-slot-id="' +
+            sl.id +
+            '" data-rid="' +
+            row.rid +
+            '">' +
+            '<label class="input-control name-control">' +
+            '<span class="input-label">Mata kuliah</span>' +
+            '<input type="text" class="name-input" list="dl-' +
+            sl.id +
+            '" aria-label="Nama mata kuliah elektif" placeholder="Nama mata kuliah" value="' +
+            escapeHtml(row.name) +
+            '">' +
+            "</label>" +
+            '<label class="input-control">' +
+            '<span class="input-label">SKS</span>' +
+            '<input type="number" class="credit-input" min="0" step="0.5" inputmode="decimal" aria-label="SKS mata kuliah elektif" placeholder="0" value="' +
+            escapeHtml(row.credit) +
+            '">' +
+            "</label>" +
+            '<label class="input-control">' +
+            '<span class="input-label">Grade point</span>' +
+            '<input type="number" class="mark-input" list="pointsRef" min="0" max="4" step="0.01" inputmode="decimal" aria-label="Grade point untuk mata kuliah elektif" placeholder="0.00" value="' +
+            escapeHtml(row.mark) +
+            '">' +
+            "</label>" +
+            '<span class="course-grade" id="grade-' +
+            row.rid +
+            '">—</span>' +
+            '<button type="button" class="remove-row-btn" data-slot-id="' +
+            sl.id +
+            '" data-rid="' +
+            row.rid +
+            '" title="Hapus" aria-label="Hapus mata kuliah elektif">✕</button>' +
+            "</div>"
+          );
+        }
+
+        function electiveSlotHTML(sl) {
+          var datalist = "";
+          if (sl.options) {
+            datalist =
+              '<datalist id="dl-' +
+              sl.id +
+              '">' +
+              sl.options
+                .map(function (o) {
+                  return '<option value="' + escapeHtml(o) + '">';
+                })
+                .join("") +
+              "</datalist>";
+          }
+          var rowsHtml = (state.electiveRows[sl.id] || [])
+            .map(function (row) {
+              return electiveRowHTML(sl, row);
+            })
+            .join("");
+          return (
+            "" +
+            '<div class="elective-slot" data-slot-id="' +
+            sl.id +
+            '">' +
+            '<span class="slot-label">' +
+            escapeHtml(sl.label) +
+            "</span>" +
+            datalist +
+            '<div class="slot-rows" id="rows-' +
+            sl.id +
+            '">' +
+            rowsHtml +
+            "</div>" +
+            '<button type="button" class="add-row-btn" data-slot-id="' +
+            sl.id +
+            '">+ Tambah Mata Kuliah</button>' +
+            "</div>"
+          );
+        }
+
+        function semesterHTML(s) {
+          var fixedHtml = s.fixed.map(fixedRowHTML).join("");
+          var electiveHtml = s.electiveSlots.map(electiveSlotHTML).join("");
+          return (
+            "" +
+            '<div class="sem-block" data-semester-id="' +
+            s.id +
+            '">' +
+            '<div class="sem-head"><h3>' +
+            escapeHtml(s.label) +
+            '</h3><div class="sem-actions"><button type="button" class="fill-semester-btn" data-semester-id="' +
+            s.id +
+            '" title="Isi semua mata kuliah semester ini dengan satu nilai" aria-label="Isi semua mata kuliah semester ini dengan satu nilai">⚡</button><span class="sem-gpa" id="semgpa-' +
+            s.id +
+            '">Belum ada nilai</span></div></div>' +
+            fixedHtml +
+            electiveHtml +
+            "</div>"
+          );
+        }
+
+        function yearHTML(y) {
+          var semsHtml = y.semesters.map(semesterHTML).join("");
+          return (
+            "" +
+            '<details class="year-card"' +
+            (y.year === 1 ? " open" : "") +
+            ">" +
+            '<summary><span class="summary-title">Tahun ' +
+            y.year +
+            '</span><span class="year-badge" id="yeargpa-' +
+            y.year +
+            '">Belum ada nilai</span></summary>' +
+            '<div class="year-body">' +
+            semsHtml +
+            "</div>" +
+            "</details>"
+          );
+        }
+
+        function renderSlotRows(slotId) {
+          var sl = findSlot(slotId);
+          var container = document.getElementById("rows-" + slotId);
+          if (!sl || !container) return;
+          container.innerHTML = (state.electiveRows[slotId] || [])
+            .map(function (row) {
+              return electiveRowHTML(sl, row);
+            })
+            .join("");
+        }
+
+        function buildUI() {
+          document.getElementById("yearsContainer").innerHTML = curriculum
+            .map(yearHTML)
+            .join("");
+          // paint any pre-filled grade badges (from restored state)
+          curriculum.forEach(function (y) {
+            y.semesters.forEach(function (s) {
+              s.fixed.forEach(function (c) {
+                updateGradeBadge("grade-" + c.id, state.fixed[c.id]);
+              });
+              s.electiveSlots.forEach(function (sl) {
+                (state.electiveRows[sl.id] || []).forEach(function (row) {
+                  updateGradeBadge("grade-" + row.rid, row.mark);
+                });
+              });
+            });
+          });
+          recomputeAndRender();
+        }
+
+        function fillSemester(semesterId, value) {
+          var semester = findSemester(semesterId);
+          var semesterEl = document.querySelector(
+            '.sem-block[data-semester-id="' + semesterId + '"]',
+          );
+          if (!semester || !semesterEl) return;
+
+          if (parsePoints(value) === null) {
+            return false;
+          }
+
+          var markInputs = semesterEl.querySelectorAll("input.mark-input");
+          markInputs.forEach(function (input) {
+            input.value = value;
+            if (input.dataset.fixedId) {
+              state.fixed[input.dataset.fixedId] = value;
+            } else {
+              var rowEl = input.closest(".elective-row");
+              var rows = rowEl && state.electiveRows[rowEl.dataset.slotId];
+              var row =
+                rows &&
+                rows.find(function (item) {
+                  return item.rid === rowEl.dataset.rid;
+                });
+              if (row) row.mark = value;
+            }
+          });
+
+          markInputs.forEach(function (input) {
+            updateGradeBadge(
+              "grade-" +
+                (input.dataset.fixedId ||
+                  input.closest(".elective-row").dataset.rid),
+              value,
+            );
+          });
+          recomputeAndRender();
+          scheduleSave();
+          return true;
+        }
+
+        /* ================= EVENTS ================= */
+        var activeFillSemesterId = null;
+        function clampMarkInput(input) {
+          if (input.value === "") return;
+          var v = parseFloat(input.value);
+          if (isNaN(v)) return;
+          if (v > 4) input.value = 4;
+          if (v < 0) input.value = 0;
+        }
+
+        document.addEventListener("input", function (e) {
+          var t = e.target;
+          if (t.classList.contains("mark-input") && t.dataset.fixedId) {
+            clampMarkInput(t);
+            state.fixed[t.dataset.fixedId] = t.value;
+            updateGradeBadge("grade-" + t.dataset.fixedId, t.value);
+            recomputeAndRender();
+            scheduleSave();
+            return;
+          }
+          var rowEl = t.closest(".elective-row");
+          if (rowEl) {
+            var slotId = rowEl.dataset.slotId,
+              rid = rowEl.dataset.rid;
+            var rows = state.electiveRows[slotId];
+            var row =
+              rows &&
+              rows.find(function (r) {
+                return r.rid === rid;
+              });
+            if (row) {
+              if (t.classList.contains("name-input")) row.name = t.value;
+              else if (t.classList.contains("credit-input"))
+                row.credit = t.value;
+              else if (t.classList.contains("mark-input")) {
+                clampMarkInput(t);
+                row.mark = t.value;
+              }
+              updateGradeBadge("grade-" + rid, row.mark);
+              recomputeAndRender();
+              scheduleSave();
+            }
+          }
+        });
+
+        document.addEventListener("click", function (e) {
+          var fillBtn = e.target.closest(".fill-semester-btn");
+          if (fillBtn) {
+            activeFillSemesterId = fillBtn.dataset.semesterId;
+            var fillDialog = document.getElementById("fillDialog");
+            var fillValue = document.getElementById("fillValue");
+            var semester = findSemester(activeFillSemesterId);
+            document.getElementById("fillDialogTitle").textContent =
+              "Isi semua mata kuliah · " +
+              (semester ? semester.label : "Semester");
+            fillValue.value = "";
+            fillDialog.showModal();
+            fillValue.focus();
+            return;
+          }
+          var addBtn = e.target.closest(".add-row-btn");
+          if (addBtn) {
+            var slotId = addBtn.dataset.slotId;
+            var sl = findSlot(slotId);
+            if (sl) {
+              state.electiveRows[slotId].push({
+                rid: "r" + rowCounter++,
+                name: "",
+                credit: sl.options ? String(sl.defaultCredit) : "",
+                mark: "",
+              });
+              renderSlotRows(slotId);
+              scheduleSave();
+            }
+            return;
+          }
+          var rmBtn = e.target.closest(".remove-row-btn");
+          if (rmBtn) {
+            var sId = rmBtn.dataset.slotId,
+              rId = rmBtn.dataset.rid;
+            state.electiveRows[sId] = state.electiveRows[sId].filter(
+              function (r) {
+                return r.rid !== rId;
+              },
+            );
+            renderSlotRows(sId);
+            recomputeAndRender();
+            scheduleSave();
+            return;
+          }
+          if (e.target.id === "resetBtn") {
+            if (
+              confirm(
+                "Hapus semua nilai yang sudah diisi? Tindakan ini tidak bisa dibatalkan.",
+              )
+            ) {
+              state = defaultState();
+              buildUI();
+              try {
+                if (window.storage && window.storage.delete) {
+                  window.storage
+                    .delete(STORAGE_KEY, false)
+                    .catch(function () {});
+                }
+                localStorage.removeItem(STORAGE_KEY);
+              } catch (err) {}
+            }
+          }
+        });
+
+        document
+          .getElementById("fillCancel")
+          .addEventListener("click", function () {
+            document.getElementById("fillDialog").close();
+          });
+
+        document
+          .getElementById("fillDialogForm")
+          .addEventListener("submit", function (e) {
+            var fillValue = document.getElementById("fillValue");
+            if (!fillSemester(activeFillSemesterId, fillValue.value)) {
+              e.preventDefault();
+              fillValue.focus();
+              return;
+            }
+            document.getElementById("fillDialog").close();
+          });
+
+        /* ================= INIT ================= */
+        async function init() {
+          try {
+            if (window.storage && window.storage.get) {
+              var res = await window.storage.get(STORAGE_KEY, false);
+              if (res && res.value) {
+                state = mergeState(res.value);
+              }
+            } else {
+              var saved = localStorage.getItem(STORAGE_KEY);
+              if (saved) state = mergeState(saved);
+            }
+          } catch (e) {
+            /* no saved data yet, or storage unavailable — start fresh */
+          }
+          buildUI();
+        }
+
+        init();
+      })();
+    </script>
+  </body>
+</html>
